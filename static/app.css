@@ -1,0 +1,18 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    background: dimgray;
+}
+
+h1.header{
+    padding-top: 5rem;
+}
+
+.main.container, .footer{
+    flex: 1 0 auto;
+}
+
+canvas#process{
+    padding-top: 15rem;
+}

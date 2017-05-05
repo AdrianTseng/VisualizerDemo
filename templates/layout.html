@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width"/>
+    <title>{{ title }}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+
+    <link rel="stylesheet" href="/static/app.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+</head>
+<body>
+    <header>
+        <div class="ui center aligned grid">
+            <h1 class="header">
+            {{ title }}
+        </h1>
+        </div>
+    </header>
+    <main class="main container" id="app">
+
+        <div class="test-process ui one centered grid">
+            <canvas id="process" v-update-progress="step"></canvas>
+        </div>
+
+        <div class="ui two centered grid">
+            <button v-on:click="update" class="ui inverted grey button" style="width: auto">触发事件</button>
+        </div>
+    </main>
+    <footer></footer>
+    <script src="/static/app.js"></script>
+</body>
+</html>
