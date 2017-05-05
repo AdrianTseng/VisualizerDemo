@@ -31,6 +31,3 @@ def partials(content):
 @app.route('/static/<path:static_file>')
 def statics(static_file):
     return url_for('static', static_file)
-
-
-app.run()
