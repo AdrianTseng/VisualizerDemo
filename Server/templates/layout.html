@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width"/>
+    <title>{{ title }}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.10/semantic.min.js"></script>
+
+    <link rel="stylesheet" href="/static/app.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script src="/static/app.js"></script>
+</head>
+<body>
+    <header>
+        <div class="ui center aligned grid">
+            <h1 class="header">
+            {{ title }}
+        </h1>
+        </div>
+    </header>
+    <main class="main container" id="app">
+
+        <div class="test-progress ui one centered grid">
+            <canvas id="progress" v-update-progress="step"></canvas>
+        </div>
+
+        <div class="ui two centered grid">
+            <button v-on:click="update" class="ui inverted grey button" style="width: auto">触发事件</button>
+        </div>
+    </main>
+    <footer></footer>
+    <script>
+        let testElements = [
+            {% for entity in entities %}
+                {{ entity|safe }}
+            {% endfor %}
+        ];
+
+        let app = new Vue({
+            el: '#app',
+            data: {
+                step: 0,
+                animatedFrame: null,
+
+            },
+            directives: {
+                updateProgress: function (canvasElement, binding) {
+                    function updateFrame() {
+                        let canvas = document.getElementById("progress");
+                        canvas.width = 640;
+                        canvas.height = 400;
+                        let ctx = canvas.getContext("2d");
+
+                        testElements.forEach(function (testCase) {
+                            testCase.draw(ctx);
+                        });
+                    }
+
+                    this.animatedFrame = window.requestAnimationFrame(updateFrame);
+                }
+            },
+            watch: {
+                step: function () {
+                    //console.log("step is " + this.step);
+                    testElements.forEach(function (each) {
+                        console.log(each);
+                    });
+                    console.log(this.step);
+                }
+            },
+            methods: {
+                update: function () {
+                    if(this.step >= 3){
+                        testElements.forEach(function (each) {
+                            each.setState("standby");
+                        });
+                        this.step = 0;
+                    }else{
+                        if(this.step == 0){
+                            testElements[0].setState("succeed");
+                        }else if(this.step == 1){
+                            testElements[1].setState("warning");
+                        }else if(this.step == 2) {
+                            testElements[2].setState("failed");
+                        }
+                        this.step++;
+                    }
+                }
+            }
+        });
+
+        let socket = io.connect("http://" + document.domain + ":" + location.port);
+        socket.on("update", function (msg) {
+            console.log(msg);
+            msg.forEach(function (for_each) {
+                testElements.forEach(function (each) {
+                    each .updateState(for_each.name, for_each.status)
+                })
+            });
+            if(app.step < 4){
+                app.step = 4;
+            }else{
+                app.step++;
+            }
+        })
+    </script>
+</body>
+</html>

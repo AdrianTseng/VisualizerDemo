@@ -1,4 +1,4 @@
-from visualizer import app
+from Server import io, app
 
 if __name__ == "__main__":
-    app.run()
+    io.run(app)
